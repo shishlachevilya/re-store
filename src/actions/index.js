@@ -1,19 +1,26 @@
-export const booksLoaded = (newBooks) => {
+const booksRequest = () => {
   return {
-    type: 'BOOKS_LOADED',
+    type: 'FETCH_BOOKS_REQUEST'
+  }
+};
+
+const booksLoaded = (newBooks) => {
+  return {
+    type: 'FETCH_BOOKS_SUCCESS',
     payload: newBooks
   }
 };
 
-export const booksRequest = () => {
+const booksError = (error) => {
   return {
-    type: 'BOOKS_REQUEST'
+    type: 'FETCH_BOOKS_FAILURE',
+    payload: error
   }
 };
 
-export const booksError = (error) => {
-  return {
-    type: 'BOOKS_ERROR',
-    payload: error
-  }
+export const fetchBooks = (bookstoreService, dispatch) => () => {
+  dispatch(booksRequest());
+  bookstoreService.getBooks()
+    .then((data) => dispatch(booksLoaded(data)))
+    .catch((error) => dispatch(booksError(error)));
 };

@@ -1,6 +1,6 @@
 import React from 'react';
 import { Switch, Route } from 'react-router-dom';
-import { HomePage, CardPage } from '../pages';
+import { HomePage, CardPage } from '../Pages';
 import ShopHeader from '../ShopHeader';
 
 const App = () => {
