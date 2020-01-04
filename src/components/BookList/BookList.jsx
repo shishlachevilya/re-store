@@ -2,14 +2,14 @@ import React from 'react';
 import BookListItem from '../BookListItem';
 import './book-list.css';
 
-const BookList = ({books}) => {
+const BookList = ({ books, onAddedToCart }) => {
   return (
     <ul className='book-list'>
       {
         books.map((book) => {
           return (
             <li key={ book.id }>
-              <BookListItem book={ book }/>
+              <BookListItem book={ book } onAddedToCart={ () => onAddedToCart(book.id) }/>
             </li>
           )
         })
