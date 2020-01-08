@@ -6,7 +6,14 @@ const initialState = {
   orderTotal: 220
 };
 
-const updateCardItems = (cartItems, item, index) => {
+const updateCardItem = (cartItems, item, index) => {
+  if(item.count === 0) {
+    return [
+      ...cartItems.slice(0, index),
+      ...cartItems.slice(index + 1)
+    ]
+  }
+
   if(index === -1) {
     return [
       ...cartItems,
@@ -21,8 +28,8 @@ const updateCardItems = (cartItems, item, index) => {
   ]
 };
 
-const updateOrder = (state, bookId) => {
-  const {books, cartItems} = state;
+const updateOrder = (state, bookId, quantity) => {
+  const { books, cartItems } = state;
 
   const book = books.find((book) => book.id === bookId);
   const itemIndex = cartItems.findIndex((book) => book.id === bookId);
@@ -32,8 +39,8 @@ const updateOrder = (state, bookId) => {
   if(item) {
     newItem = {
       ...item,
-      count: item.count + 1,
-      total: book.price + item.total
+      count: item.count + quantity,
+      total: item.total + (quantity * book.price)
     }
   } else {
     newItem = {
@@ -46,7 +53,7 @@ const updateOrder = (state, bookId) => {
 
   return {
     ...state,
-    cartItems: updateCardItems(state.cartItems, newItem, itemIndex)
+    cartItems: updateCardItem(state.cartItems, newItem, itemIndex)
   };
 };
 
@@ -72,12 +79,15 @@ const reducer = (state = initialState, action) => {
         isError: action.payload
       };
     case 'BOOK_ADDED_TO_CART':
-      return updateOrder(state, action.payload);
+      return updateOrder(state, action.payload, 1);
 
     case 'BOOK_REMOVE_FROM_CART':
-      return {
-        ...state
-      };
+      return updateOrder(state, action.payload, -1);
+
+    case 'ALL_BOOK_REMOVE_FROM_CART':
+      const item = state.cartItems.find(({id}) => id === action.payload);
+
+      return updateOrder(state, action.payload, -item.count);
     default:
       return state
   }
